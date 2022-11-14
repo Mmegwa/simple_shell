@@ -21,7 +21,8 @@ Files
 		_puts -> prints a string
 		_strlen -> gives the length of a string
 		_strdup -> copies a string in a newly allocated memory
-		concat_all -> concatenates 3 strings in a newly allocated memory6	line_exec.c
+		concat_all -> concatenates 3 strings in a newly allocated memory
+6	line_exec.c
 		splitstring -> splits a string into an array of words
 		execute -> executes a command using execve
 		realloc -> reallocates a memory block
