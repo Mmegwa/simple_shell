@@ -10,7 +10,7 @@ int main(void)
 {
 	sh_t data;
 	int pl;
-	
+
 	_memset((void *)&data, 0, sizeof(data));
 	signal(SIGINT, signal_handler);
 	while (1)
@@ -60,7 +60,7 @@ int read_line(sh_t *data)
 {
 	char *csr_ptr, *end_ptr, c;
 	size_t size = BUFSIZE, read_st, length, new_size;
-	
+
 	data->line = malloc(size * sizeof(char));
 	if (data->line == NULL)
 		return (FAIL);
@@ -103,7 +103,7 @@ int split_line(sh_t *data)
 {
 	char *token;
 	size_t size = TOKENSIZE, new_size, i = 0;
-	
+
 	if (_strcmp(data->line, "\n") == 0)
 		return (FAIL);
 	data->args = malloc(size * sizeof(char *));
@@ -163,7 +163,7 @@ int process_cmd(sh_t *data)
 {
 	pid_t pid;
 	int status;
-	
+
 	pid = fork();
 	if (pid == 0)
 	{
