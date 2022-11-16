@@ -33,7 +33,7 @@ extern char **environ;
  * @oldpwd: the old path visited
  * @env: the environment
  *
- * Description: A structure contains all the variables needed to manage the program, memory and accessibility
+ * Description: A structure contains all the variables needed
  */
 typedef struct sh_data
 {

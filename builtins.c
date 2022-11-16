@@ -51,7 +51,7 @@ int change_dir(sh_t *data)
  * Return: (Success) 0 is returned
  * ------- (Fail) negative number will returned
  */
-int abort_prg(sh_t *data _attribute_((unused)))
+int abort_prg(sh_t *data __attribute__((unused)))
 {
 	int code, i = 0;
 
