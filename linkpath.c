@@ -1,95 +1,148 @@
 #include "shell.h"
-/**
- * _getenv - gets the path
- * @path_name: a pointer to the struct of data
- *
- * Return: (Success) a positive number
- * ------- (Fail) a negative number
- */
-char *_getenv(char *path_name)
-{
-	char **environ_cursor, *env_ptr, *name_ptr;
 
-	environ_cursor = environ;
-	while (*environ_cursor)
+
+/**
+ * _getenv - gets the value of the global variable
+ * @name: name of the global variable
+ * Return: string of value
+ */
+char *_getenv(const char *name)
+{
+	int i, j;
+	char *value;
+
+	if (!name)
+		return (NULL);
+	for (i = 0; environ[i]; i++)
 	{
-		env_ptr = *environ_cursor;
-		name_ptr = path_name;
-		while (*env_ptr == *name_ptr)
+		j = 0;
+		if (name[j] == environ[i][j])
 		{
-			if (*env_ptr == '=')
-				break;
-			env_ptr++;
-			name_ptr++;
+			while (name[j])
+			{
+				if (name[j] != environ[i][j])
+					break;
+
+				j++;
+			}
+			if (name[j] == '\0')
+			{
+				value = (environ[i] + j + 1);
+				return (value);
+			}
 		}
-		if ((*env_ptr == '=') && (*name_ptr == '\0'))
-			return (env_ptr + 1);
-		environ_cursor++;
 	}
+	return (0);
+}
+
+
+/**
+ * add_node_end - adds a new node at the end of a list_t list
+ * @head: pointer to pointer to our linked list
+ * @str: pointer to string in previous first node
+ * Return: address of the new element/node
+ */
+
+list_path *add_node_end(list_path **head, char *str)
+{
+
+	list_path *tmp;
+	list_path *new;
+
+	new = malloc(sizeof(list_path));
+
+	if (!new || !str)
+	{
+		return (NULL);
+	}
+
+	new->dir = str;
+
+	new->p = '\0';
+	if (!*head)
+	{
+		*head = new;
+	}
+	else
+	{
+		tmp = *head;
+
+		while (tmp->p)
+		{
+
+			tmp = tmp->p;
+		}
+
+		tmp->p = new;
+	}
+
+	return (*head);
+}
+
+
+/**
+ * linkpath - creates a linked list for path directories
+ * @path: string of path value
+ * Return: pointer to the created linked list
+ */
+list_path *linkpath(char *path)
+{
+	list_path *head = '\0';
+	char *token;
+	char *cpath = _strdup(path);
+
+	token = strtok(cpath, ":");
+	while (token)
+	{
+		head = add_node_end(&head, token);
+		token = strtok(NULL, ":");
+	}
+
+	return (head);
+}
+
+/**
+ * _which - finds the pathname of a filename
+ * @filename: name of file or command
+ * @head: head of linked list of path directories
+ * Return: pathname of filename or NULL if no match
+ */
+char *_which(char *filename, list_path *head)
+{
+	struct stat st;
+	char *string;
+
+	list_path *tmp = head;
+
+	while (tmp)
+	{
+
+		string = concat_all(tmp->dir, "/", filename);
+		if (stat(string, &st) == 0)
+		{
+			return (string);
+		}
+		free(string);
+		tmp = tmp->p;
+	}
+
 	return (NULL);
 }
-/**
- * signal_handler - handle the process interrept signal
- * @signo: the signal identifier
- *
- * Return: void
- */
-void signal_handler(int signo)
-{
-	if (signo == SIGINT)
-	{
-		PRINT("\n");
-		PRINT(PROMPT);
-	}
-}
-/**
- * fill_an_array - fill an array with elements
- * @a: the given array
- * @el: the given element
- * @len: the length of the array
- *
- * Return: pointer to filled array
- */
-void *fill_an_array(void *a, int el, unsigned int len)
-{
-	char *p = a;
-	unsigned int i = 0;
-
-	while (i < len)
-	{
-		*p = el;
-		p++;
-		i++;
-	}
-	return (a);
-}
 
 /**
- * array_rev - reverse array
- * @arr: the given array
- * @len: the array length
- *
- * Return: void
+ * free_list - frees a list_t
+ *@head: pointer to our linked list
  */
-void array_rev(char *arr, int len)
+void free_list(list_path *head)
 {
-	int i;
-	char tmp;
+	list_path *storage;
 
-	for (i = 0; i < (len / 2); i++)
+	while (head)
 	{
-		tmp = arr[i];
-		arr[i] = arr[(len - 1) - i];
-		arr[(len - 1) - i] = tmp;
+		storage = head->p;
+		free(head->dir);
+		free(head);
+		head = storage;
 	}
-}
-/**
- * index_cmd - indexed command
- * @data: a pointer to the data structure
- *
- * Return: void
- */
-void index_cmd(sh_t *data)
-{
-	data->index += 1;
+
 }
